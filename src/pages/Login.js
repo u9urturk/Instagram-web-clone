@@ -2,13 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import {GrFacebook} from 'react-icons/gr';
 import Input from '../components/Input';
 import { useNavigate , useLocation} from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { setUser } from '../store/auth';
 import { login } from '../firebase.js';
 
 export default function Login() {
     
-    const dispacth = useDispatch()
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -37,11 +35,13 @@ export default function Login() {
 
     const handleSubmit = async e => {
         e.preventDefault()
+        //console.log(username,password)
         await login(username,password)
-        /*
+        
+        
         navigate(location.state?.return_url || '/' , {
             replace:true
-        } )*/
+        } )
     }
   
     return (
