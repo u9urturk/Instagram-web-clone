@@ -39,7 +39,9 @@ export const login = async (email,password)=>{
 
 export const logout =async ()=>{
   try {
+   
     await signOut(auth)
+    
   } catch (err) {
     toast.error(err.code);
   }
