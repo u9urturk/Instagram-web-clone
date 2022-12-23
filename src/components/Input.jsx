@@ -1,5 +1,6 @@
 import { useField } from 'formik';
 import React, { useEffect, useRef, useState } from 'react'
+import classNames from 'classnames';
 
 export default function Input({ label,type = "text", ...props }) {
 
@@ -18,11 +19,18 @@ export default function Input({ label,type = "text", ...props }) {
     },[show])
 
     return (
-        <label className='block relative flex border rounden-sm focus-within:border-gray-400  '>
-            <input   required={true}  type={inputType} className='w-full  bg-zinc-50  px-2 text-xs outline-none  h-[38px] peer valid:pt-[10px]'{...field} {...props}></input>
-            <small className='absolute top-4 left-[10px] text-xs cursor-text pointer-events-none text-gray-400 -translate-y-1/2 transition-all peer-valid:text-[10px] peer-valid:pb-[10px]'>{label}</small>
-            {type==="password" && props?.value &&(
-                <div type="button" onClick={() => setShow(show => !show)} className=' h-full cursor-pointer select-none flex items-center text-sm font-semibold pr-2'>
+        <label className='block relative flex bg-zinc-50 border rounded-sm focus-within:border-gray-400  '>
+            <input     type={inputType} className={classNames({
+                'px-2 text-xs outline-none bg-transparent w-full  h-[38px]':true,
+                'pt-[10px]':field.value
+            })}{...field} {...props}></input>
+            <small className={classNames({
+                'absolute left-[9px]  cursor-text pointer-events-none text-gray-400 -translate-y-1/2 transition-all ':true,
+                'text-xs  top-1/2 ':!field.value,
+                'text-[10px] top-2.5':field.value
+            })}>{label}</small>
+            {type==="password" && field?.value &&(
+                <div onClick={() => setShow(show => !show)} className=' h-full cursor-pointer select-none flex items-center text-sm font-semibold pr-2'>
                     {show ? 'Hide' : 'Show'}
                 </div>      
             )}

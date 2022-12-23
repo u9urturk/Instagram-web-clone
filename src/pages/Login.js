@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { GrFacebook } from 'react-icons/gr';
 import Input from '../components/Input';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation , Link } from 'react-router-dom';
 import { login } from '../firebase.js';
 import { Formik, Form } from 'formik';
+import { LoginSchema } from '../validation';
+import Button from '../components/Button';
+import Separator from '../components/Separator';
 
 export default function Login() {
 
@@ -29,11 +32,16 @@ export default function Login() {
     }
   }, [ref])
 
+  
+
   const handleSubmit = async (values,actions) => {
-    await login(...values)
-    navigate(location.state?.return_url || '/', {
-      replace: true
-    })
+    const response =  await login(values.username,values.password)
+    if(response){
+      navigate(location.state?.return_url || '/', {
+        replace: true
+      })
+    }
+    
   }
 
   return (
@@ -52,6 +60,7 @@ export default function Login() {
             <img className='h-[51px]' src={require('../assets/logo1.png')} alt=''></img>
           </a>
           <Formik
+            validationSchema={LoginSchema}
             initialValues={{
               username: '',
               password: ''
@@ -60,19 +69,12 @@ export default function Login() {
 
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting,values }) => (
+            {({ isSubmitting,values, isValid,dirty }) => (
               <Form className='grid gap-y-2'>
-                <pre>{JSON.stringify(values,null,2)}</pre>
                 <Input  name="username"  label="Phone number, username or email" />
                 <Input  type="password" name="password"  label="Password" />
-                <button type="submit" className='w-full h-[30px] disabled:opacity-40 rounded-md  bg-facebook  text-white font-semibold  '>Log in</button>
-
-
-                <div className='flex items-center'>
-                  <div className='h-px bg-gray-300 flex-1'></div>
-                  <span className='px-4 text-xs'>OR</span>
-                  <div className='h-px bg-gray-300 flex-1'></div>
-                </div>
+                <Button type='submit' disabled={!isValid || !dirty || isSubmitting}>Log In</Button>
+                <Separator></Separator>
                 <a href='#' className=' cursor-pointer flex justify-center items-center gap-x-2 text-sm font-semibold text-facebook'>
                   <GrFacebook size={20} />
                   Log in with Facebook
@@ -88,7 +90,7 @@ export default function Login() {
 
         </div>
         <div className='w-full h-14 rounded  bg-white border flex items-center justify-center text-sm'>
-          Don't have an a account?<a className='text-facebook font pl-2 cursor-pointer font-semibold'>Register</a>
+          Don't have an a account?<Link to='/auth/register' className='text-facebook font pl-2 cursor-pointer font-semibold'>Register</Link>
         </div>
         <div className=' flex items-center justify-center text-sm'>
           Download the application.

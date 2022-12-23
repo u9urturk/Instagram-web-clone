@@ -21,9 +21,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 
 onAuthStateChanged(auth , user =>{
-  if(user){
+  
     userHendle(user || false)
-  }
+ 
 })
 
 export const login = async (email,password)=>{
@@ -39,9 +39,7 @@ export const login = async (email,password)=>{
 
 export const logout =async ()=>{
   try {
-   
     await signOut(auth)
-    
   } catch (err) {
     toast.error(err.code);
   }

@@ -2,6 +2,7 @@ import AuthLayout from "./pages/auth";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
+import Register from "./pages/Register";
 
 const routes = [
     {
@@ -16,6 +17,10 @@ const routes = [
         children:[
            { path:'login',
             element:<Login/>
+            },
+            {
+                path:'register',
+                element:<Register></Register>
             }
         ]
 
