@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { CiSearch } from 'react-icons/ci'
 import {AiFillCloseCircle} from 'react-icons/ai'
 import classNames from 'classnames'
+import Icon from './icon'
 
 export default function Search() {
 
@@ -12,7 +13,7 @@ export default function Search() {
         'transition-all absolute pointer-events-none text-[#8e8e8e] w-9 h-9 flex items-center justify-center':true,
         'hidden':open
       })}>
-        <CiSearch size={20} ></CiSearch>
+        <Icon name="search" ></Icon>
       </span>
       <input placeholder='Search' onFocus={()=>setOpen(true)} onBlur={()=>setOpen(false)} type="text" className=' transition-all outline-none focus:pl-3 pl-9 h-9 rounded w-full bg-[#efefef]'></input>
       <span className={classNames({
