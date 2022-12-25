@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom'
 import Icon from '../../components/icon.js'
 import { getUserInfo } from '../../firebase.js'
@@ -23,11 +24,14 @@ export default function ProfileLayout() {
         })
     },[])
   return (
-    <div>
+    <div className='px-28'>
+        <Helmet>
+        <title>{user.username}</title>
+        </Helmet>
         <Header user={user}></Header>
         <nav className='border-t flex justify-center items-center gap-x-16 '>
             <NavLink to={`/${username}`} end={true} className={({isActive})=> classNames({
-                "text-xs flex  py-5 border-t -mt-px tracking-widest items-center gap-x-1.5 font-semibold" :true,
+                "text-xs flex  py-5 border-t transition-all -mt-px tracking-widest items-center gap-x-1.5 font-semibold" :true,
                 "text-[#8e8e8e] border-transparent":!isActive,
                 "text-black  border-black":isActive
             })}>
@@ -35,7 +39,7 @@ export default function ProfileLayout() {
                 POSTS
             </NavLink>
             <NavLink to={`/${username}/saved`} end={true} className={({isActive})=> classNames({
-                "text-xs flex  py-5 border-t -mt-px tracking-widest items-center gap-x-1.5 font-semibold" :true,
+                "text-xs flex  py-5 border-t transition-all -mt-px tracking-widest items-center gap-x-1.5 font-semibold" :true,
                 "text-[#8e8e8e] border-transparent":!isActive,
                 "text-black  border-black":isActive
             })}>
@@ -43,7 +47,7 @@ export default function ProfileLayout() {
                 SAVED
             </NavLink>
             <NavLink to={`/${username}/tagged`} end={true} className={({isActive})=> classNames({
-                "text-xs flex py-5 border-t -mt-px tracking-widest items-center gap-x-1.5 font-semibold" :true,
+                "text-xs flex py-5 border-t transition-all -mt-px tracking-widest items-center gap-x-1.5 font-semibold" :true,
                 "text-[#8e8e8e] border-transparent":!isActive,
                 "text-black border-black":isActive
             })}>

@@ -7,6 +7,7 @@ import { RegisterSchema } from '../../validation';
 import Button from '../../components/Button';
 import Separator from '../../components/Separator';
 import Image from '../../components/image';
+import { Helmet } from 'react-helmet';
 
 
 export default function Register() {
@@ -26,6 +27,9 @@ export default function Register() {
 
   return (
     <div className='w-[350px] pt-24'>
+      <Helmet>
+        <title>Register</title>
+      </Helmet>
       <div className='grid gap-y-4'>
         <div className=' bg-white border px-[40px] pt-10 pb-6'>
           <a href='#' className='flex justify-center mb-4'>

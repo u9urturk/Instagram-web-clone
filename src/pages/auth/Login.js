@@ -9,6 +9,7 @@ import Button from '../../components/Button';
 import Separator from '../../components/Separator';
 import { useSelector } from 'react-redux';
 import Image from '../../components/image';
+import { Helmet } from 'react-helmet';
 
 export default function Login() {
 
@@ -43,6 +44,9 @@ export default function Login() {
 
   return (
     <div className='h-full w-full flex gap-x-8 items-center justify-center'>
+      <Helmet>
+        <title>Welcome</title>
+      </Helmet>
       <div className='hidden md:block w-[380px] h-[581px] bg-logo-patter relative bg-[length:468.32px_634.15px] bg-[top_left_-46px]' >
         <div className='w-[250px] h-[538px] absolute top-[27px] right-[18px]' ref={ref}>
           <img alt='' className=' w-full h-full absolute top-0 left-0 opacity-0 transition-opacity duration-1000 ease-linear' src={process.env.PUBLIC_URL + `/assets/1.png`}></img>
