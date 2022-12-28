@@ -7,6 +7,7 @@ export default function Icon({name,size = 16,...props}) {
     src={`${process.env.PUBLIC_URL}/icons/${name}.svg`}
     width={size}
     height={size}
+    
    />
     
   )

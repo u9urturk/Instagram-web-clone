@@ -91,7 +91,7 @@ export default function Login() {
 
         </div>
         <div className='w-full h-14 rounded  bg-white border flex items-center justify-center text-sm'>
-          Don't have an a account?<Link to='/auth/register' className='text-facebook font pl-2 cursor-pointer font-semibold'>Register</Link>
+          Don't have an a account?<Link  to='/auth/register' className='text-facebook font pl-2 cursor-pointer font-semibold'>Register</Link>
         </div>
         <div className=' flex items-center justify-center text-sm'>
           Download the application.

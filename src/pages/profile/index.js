@@ -23,6 +23,7 @@ export default function ProfileLayout() {
             })
         })
     },[])
+
   return (
     <div className='px-28'>
         <Helmet>

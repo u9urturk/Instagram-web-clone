@@ -1,9 +1,10 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { logout } from '../firebase.js'
 import Icon from './icon.js'
 import Image from './image.js'
 import Search from './Search'
+import classNames from 'classnames'
 
 export default function Header() {
     return (
@@ -17,25 +18,49 @@ export default function Header() {
 
                 <Search></Search>
 
-                <nav className='flex items-center gap-x-4 text-gray-800'>
-                    <button >
-                        <Icon name="home"  size={20}></Icon>
-                    </button>
-                    <button>
+                <nav className='flex items-center  gap-x-4 '>
+                    <NavLink to={`/`} end={true}  className={({isActive})=>classNames({
+                        "":true,
+                        "text-gray-600":!isActive,
+                        "text-black":isActive
+                    })} >
+                        <Icon  name="home"  size={20}></Icon>
+                    </NavLink>
+                    <NavLink to={`/discover`} end={true}  className={({isActive})=>classNames({
+                        "":true,
+                        "text-gray-600":!isActive,
+                        "text-black":isActive
+                    })}  >
                         <Icon name="discover"  size={20}></Icon>
-                    </button>
-                    <button>
+                    </NavLink>
+                    <NavLink to={`/reels`} end={true}  className={({isActive})=>classNames({
+                        "":true,
+                        "text-gray-600":!isActive,
+                        "text-black":isActive
+                    })} >
                         <Icon name="reels"  size={20}></Icon>
-                    </button>
-                    <button>
+                    </NavLink>
+                    <NavLink to={`/direct/inbox`} end={true}  className={({isActive})=>classNames({
+                        "":true,
+                        "text-gray-600":!isActive,
+                        "text-black":isActive
+                    })} >
                         <Icon name="message"  size={20}></Icon>
-                    </button>
-                    <button>
+                    </NavLink>
+                    <NavLink to={`/heart`} end={true}  className={({isActive})=>classNames({
+                        "":true,
+                        "text-gray-600":!isActive,
+                        "text-black":isActive
+                    })} >
                         <Icon name="heart"  size={20}></Icon>
-                    </button>
-                    <button>
+                    </NavLink>
+                    <NavLink to={`/create`} end={true}  className={({isActive})=>classNames({
+                        "":true,
+                        "text-gray-600":!isActive,
+                        "text-black":isActive
+                    })} >
                         <Icon name="create"  size={20}></Icon>
-                    </button>
+                    </NavLink>
                     <button onClick={logout}>
                         <div className='h-10 w-10 ml-2'>
                             <Image url={'baseProfileImage.jpg'}/>

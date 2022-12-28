@@ -11,6 +11,11 @@ module.exports = {
 
       colors: {
         facebook :'#0095f6' 
+      },
+      maxWidth: {
+        '4/10': '40%',
+        '3/10': '30%',
+        '7/10':'70%'
       }
 
     },

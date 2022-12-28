@@ -22,6 +22,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
 
+
+
 onAuthStateChanged(auth, async user => {
   if (user) {
     const getUser = await getDoc(doc(db,"users",user.uid))
@@ -36,6 +38,7 @@ onAuthStateChanged(auth, async user => {
 
 
     }
+    
     userHendle(data)
   } else {
     userHendle(false)
@@ -43,6 +46,9 @@ onAuthStateChanged(auth, async user => {
 
 
 })
+
+
+
 
 export const login = async (email, password) => {
   try {
@@ -59,6 +65,7 @@ export const getUserInfo = async uname=>{
   const username = await getDoc(doc(db,"usernames",uname))
   if(username.exists()){
     const user = (await getDoc(doc(db,"users",username.data().user_id))).data()
+    //console.log(user)
     return user;
   }else{
     toast.error('kullanıcı bulumamadı')
