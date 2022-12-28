@@ -36,12 +36,14 @@ export default function DirectLayout() {
 
 
     return (
-        <div className=' flex w-full
-          max-w-[935px] h-[400px] bg-white border rounded border-gray-300 '>
+        <div className=' flex 
+
+
+          max-w-[935px] min-h-screen bg-white border rounded border-gray-300 '>
             <Helmet>
                 <title>Inbox</title>
             </Helmet>
-            <div className='flex-auto max-w-4/10'>
+            <div className='flex-auto min-w-4/10 max-w-4/10'>
                 <Header user={user.username}></Header>
                 {inboxs.map( x => (
                 
@@ -60,7 +62,7 @@ export default function DirectLayout() {
                ) )}
 
             </div>
-            <div className='border-l'>
+            <div className='border-l   flex-auto flex items-center justify-center '>
                 <Outlet></Outlet>
             </div>
         </div>

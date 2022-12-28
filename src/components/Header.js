@@ -62,8 +62,8 @@ export default function Header() {
                         <Icon name="create"  size={20}></Icon>
                     </NavLink>
                     <button onClick={logout}>
-                        <div className='h-10 w-10 ml-2'>
-                            <Image url={'baseProfileImage.jpg'}/>
+                        <div className='ml-2'>
+                            <Image className="rounded-full h-12 w-12" url={'pf1.jpg'}/>
                         </div>
                     </button>
                 </nav>

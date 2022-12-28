@@ -4,7 +4,7 @@ import Image from '../../../components/image'
 export default function Header({ user }) {
     return user && (
         <header className='flex items-center gap-x-24 py-8 pb-10'>
-            <Image url={'baseProfileImage.jpg'} className="h-[150px] w-[150px] rounded-full"></Image>       <div>
+            <Image url={'pf1.jpg'} className="h-[150px] w-[150px] rounded-full"></Image>       <div>
                 <div className='mb-4'>
                     <h1 className='text-[28px] font-normal'>{user.username}</h1>
                 </div>
