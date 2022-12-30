@@ -36,7 +36,7 @@ export default function DirectLayout() {
 
 
     return (
-        <div className=' flex 
+        <div className=' flex relative
 
 
           max-w-[935px] min-h-screen bg-white border rounded border-gray-300 '>

@@ -4,10 +4,8 @@ import Icon from '../../components/icon.js'
 import Modal from '../../components/modal.js'
 export default function Inbox() {
 
-  const [visibilty, setfirst] = useState()
-
-  //console.log(visibilty);
-  
+  const [visibility, setVisibility] = useState()
+  const handleOnClose = () => setVisibility(false)
 
   return (
     <>
@@ -23,17 +21,15 @@ export default function Inbox() {
         </div>
         
         <div className='px-4 '><Button onClick={()=>{
-          setfirst(false);
+          setVisibility(true);
         }}  >Mesaj Gönder</Button></div>
-        <button type='button' onClick={()=>{
-          setfirst(true);
-        }} >test</button>
+       
         
 
 
       </div>
       <div className='absolute'>
-        <Modal isTrue={visibilty} ></Modal>
+        <Modal onClose={handleOnClose}  isVisible={visibility} ></Modal>
       </div>
     </>
 
