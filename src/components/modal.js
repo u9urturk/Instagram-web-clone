@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from './icon';
 import Image from './image';
 
@@ -63,17 +63,50 @@ export default function Modal({ isVisible = false, onClose }) {
 
     ]
 
-    const[deneme , setDeneme] = useState("")
-
-
-    const test = (fullName)=>{
+    const[sUser , setSUser] = useState("")
+    
+    useEffect(() => {
         
+        const user = {
+            name:sUser
+        }
+        console.log(user)
+        if(user.name !="" && JSON.parse(localStorage.getItem("users") == null)){
+            localStorage.setItem("users",JSON.stringify([]))
+        }
+        if(user.name != ""){
+           
+            
+            const selectUsers = JSON.parse(localStorage.getItem("users"))
+            selectUsers.push(user);
+            localStorage.setItem("users",JSON.stringify(selectUsers))
+            console.log(selectUsers);
+            
+        }
+        
+       
+    }, [sUser])
+
+    const getUserInLocalStorege = (user)=>{
+      if(user){
+        const users = JSON.parse(localStorage.getItem("users"))
+        if(users){
+              const result = users.find(findUser)
+              function findUser(us){
+                return us.name === user
+            }
+    
+            if(result){
+                console.log(result)
+                return true
+            }else{
+                return false
+            }
+
+        }
+       
+      }
     }
-
-    console.log()
-    
-    
-
 
 
     if (isVisible === false) {
@@ -108,11 +141,11 @@ export default function Modal({ isVisible = false, onClose }) {
                                     </div>
                                 </div>
 
-                                <div  onClick={()=>{test();}} 
+                                <div  onClick={()=>{setSUser(user.fullNamse)}} 
                                 className={classNames({
                                     'h-[24px] w-[24px] cursor-pointer  border-[2px] border-gray-700 rounded-full':true,
-                                   
-
+                                    'bg-facebook border-none':getUserInLocalStorege(user.fullNamse)
+                                
                                 })}></div>
                             </div>
                         ))}

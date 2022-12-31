@@ -5,7 +5,10 @@ import Modal from '../../components/modal.js'
 export default function Inbox() {
 
   const [visibility, setVisibility] = useState()
-  const handleOnClose = () => setVisibility(false)
+  const handleOnClose = () => {
+    
+    localStorage.clear()
+    setVisibility(false)}
 
   return (
     <>
