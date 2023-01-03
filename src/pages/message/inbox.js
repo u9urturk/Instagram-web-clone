@@ -11,7 +11,7 @@ export default function Inbox() {
     setVisibility(false)}
 
   return (
-    <>
+    <div className=' w-full h-full flex-auto flex items-center justify-center'>
       <div className='flex flex-col w-full space-y-4 items-center justify-center '>
         <div>
           <Icon size={96} name={'createmessage'}></Icon>
@@ -34,7 +34,7 @@ export default function Inbox() {
       <div className='absolute'>
         <Modal onClose={handleOnClose}  isVisible={visibility} ></Modal>
       </div>
-    </>
+    </div>
 
 
 

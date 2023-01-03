@@ -62,7 +62,7 @@ export default function DirectLayout() {
                ) )}
 
             </div>
-            <div className='border-l   flex-auto flex items-center justify-center '>
+            <div className='border-l flex-auto min-w-6/10 max-w-6/10  '>
                 <Outlet></Outlet>
             </div>
         </div>

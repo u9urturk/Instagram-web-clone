@@ -5,8 +5,13 @@ import Icon from './icon.js'
 import Image from './image.js'
 import Search from './Search'
 import classNames from 'classnames'
+import { useSelector } from 'react-redux'
 
 export default function Header() {
+
+    const user = useSelector(state => state.auth.user)
+
+
     return (
         <header className='bg-white border-b border-gray-300 '>
             <div className='flex items-center justify-between h-[60px] container mx-auto  '>
@@ -61,11 +66,9 @@ export default function Header() {
                     })} >
                         <Icon name="create"  size={20}></Icon>
                     </NavLink>
-                    <button onClick={logout}>
-                        <div className='ml-2'>
-                            <Image className="rounded-full h-12 w-12" url={'pf1.jpg'}/>
-                        </div>
-                    </button>
+                    <NavLink to={`/${user.username}`} className="ml-2">
+                         <Image className="rounded-full h-12 w-12" url={'pf1.jpg'}/>
+                    </NavLink>
                 </nav>
   
             </div>
