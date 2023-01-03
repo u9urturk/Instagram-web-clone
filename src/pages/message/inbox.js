@@ -7,7 +7,7 @@ export default function Inbox() {
   const [visibility, setVisibility] = useState()
   const handleOnClose = () => {
     
-    localStorage.clear()
+    
     setVisibility(false)}
 
   return (
