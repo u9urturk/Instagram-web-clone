@@ -8,8 +8,9 @@ export default function Inbox() {
   const handleOnClose = () => {
     
     
-    setVisibility(false)}
-
+    setVisibility(false)
+  }
+    
   return (
     <div className=' w-full h-full flex-auto flex items-center justify-center'>
       <div className='flex flex-col w-full space-y-4 items-center justify-center '>
@@ -32,7 +33,7 @@ export default function Inbox() {
 
       </div>
       <div className='absolute'>
-        <Modal onClose={handleOnClose}  isVisible={visibility} ></Modal>
+        <Modal onClose={handleOnClose} isVisible={visibility} ></Modal>
       </div>
     </div>
 

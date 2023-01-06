@@ -1,14 +1,16 @@
-import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import Icon from '../../components/icon'
 import Image from '../../components/image'
 
+
 export default function MessageTest() {
   const user = useSelector(state => state.auth.user)
-  console.log(user)
+  //console.log(user)
+
+ 
   return (
-    <div>
+    <div className=''>
       {/* Header */}
       <div className='w-full h-[60px]  border-b border-gray-300'>
         <div className='px-10 h-full w-full flex items-center'>

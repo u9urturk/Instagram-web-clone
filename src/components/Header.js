@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux'
 export default function Header() {
 
     const user = useSelector(state => state.auth.user)
+   // console.log(user.username)
 
 
     return (
@@ -67,7 +68,7 @@ export default function Header() {
                         <Icon name="create"  size={20}></Icon>
                     </NavLink>
                     <NavLink to={`/${user.username}`} className="ml-2">
-                         <Image className="rounded-full h-12 w-12" url={'pf1.jpg'}/>
+                        <div  ><img className="rounded-full h-12 w-12" src={user.profileImage}></img></div>
                     </NavLink>
                 </nav>
   

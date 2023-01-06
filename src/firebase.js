@@ -1,7 +1,9 @@
+import { data } from "autoprefixer";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signOut, updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore"
+import { getFirestore, doc, setDoc, getDoc, collection, collectionGroup, getDocs } from "firebase/firestore"
 import { toast } from "react-hot-toast";
+import { date } from "yup";
 import { userHendle } from "./utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -73,6 +75,28 @@ export const getUserInfo = async uname=>{
   }
 }
 
+export const getAllUsers = async ()=>{
+  const result = await getDocs(collection(db,"users"))
+  const users = []
+  result.forEach((elt) => {
+      let user={
+      username:elt.data().username,
+      fullname:elt.data().full_name,
+      profileImage:elt.data().profileImage}
+
+      users.push(user)
+  });
+
+  //console.log(users)
+  try {
+    if(users){
+      return users;
+    }
+  } catch (error) {
+    toast.error(error)
+  }
+}
+
 export const register = async ({ email, password, full_name, username }) => {
 
   try {
@@ -99,7 +123,8 @@ export const register = async ({ email, password, full_name, username }) => {
           bio:'',
           phoneNumber:'',
           gender:'',
-          posts:0
+          posts:0,
+          profileImage:""
   
         })
   
@@ -118,6 +143,32 @@ export const register = async ({ email, password, full_name, username }) => {
     toast.error(error.code)
   }
 }
+
+function randomId(length) {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+export const  createMessageBox =async (uid,members=[{mUId:""}])=>{
+    try {
+      if(uid){
+        await setDoc(doc(db, "messageboxes", uid), {
+          id:null,
+          members: members,
+          formationtime:new date(),
+          messagaBoxId:randomId(11)
+
+        })
+      }
+    } catch (error) {
+      toast.error(error.code)
+    }
+} 
 
 
 export const logout = async () => {

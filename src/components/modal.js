@@ -1,33 +1,12 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast';
+import { getAllUsers } from '../firebase.js';
 import Icon from './icon';
-import Image from './image';
 
-export default function Modal({ isVisible = false, onClose }) {
+export default function Modal({ isVisible = false, onClose, ...props }) {
 
-    const users = [
-        {
-            id: 1,
-            url: "pf1.jpg",
-            name: "Tomris",
-            fullNamse: "tomris.ugur"
-        },
-        {
-            id: 2,
-            url: "pf2.jpg",
-            name: "Merve",
-            fullNamse: "merve.d3n3m3"
-        },
-        {
-            id: 3,
-            url: "pf3.jpg",
-            name: "Selin",
-            fullNamse: "selin.d3n3m3"
-        }
-
-    ]
-
-
+    const [users, setUsers] = useState([])
     const [sUser, setSUser] = useState([])
     const [result, setResutl] = useState(null)
 
@@ -40,52 +19,57 @@ export default function Modal({ isVisible = false, onClose }) {
     function tb(xuser) {
         let ast = false;
         result && result.forEach(element => {
-       
-            if(xuser == element.name){
-               
+
+            if (xuser == element.name) {
+
                 ast = true;
             }
         });
 
         return ast;
-    }    
+    }
 
-    
+
     useEffect(() => {
-        
+
         const user = {
-            id: sUser.id,
-            name: sUser.fullNamse
+            
+            name: sUser.username
 
         }
         //console.log(user)
         if (user.name != "" && JSON.parse(localStorage.getItem("users") == null)) {
             localStorage.setItem("users", JSON.stringify([]))
         }
-        if (user.name != "" && sUser.id) {
+        if (user.name != "" && user.name) {
 
-            let isValidate=true
+            let isValidate = true
             const selectUsers = JSON.parse(localStorage.getItem("users"))
             selectUsers.forEach(element => {
-                if(element.name == user.name){
+                if (element.name == user.name) {
                     isValidate = false;
-                    alert("Kullanıcı seçilmiş durumda !")
+                    toast.error("Kullanıcı seçilmiş durumda")
                 }
             });
 
-            if(isValidate){
+            if (isValidate) {
                 selectUsers.push(user);
-            localStorage.setItem("users", JSON.stringify(selectUsers))
-            setResutl(selectUsers);
+                localStorage.setItem("users", JSON.stringify(selectUsers))
+                setResutl(selectUsers);
             }
 
-            
+
 
         }
-
-       
-
     }, [sUser])
+
+    useEffect(() => {
+        getAllUsers().then(xs => {
+            setUsers(xs)
+            //console.log(users)
+        })
+    }, [])
+    
 
 
     if (isVisible === false) {
@@ -106,8 +90,8 @@ export default function Modal({ isVisible = false, onClose }) {
                 <div className='border-b transition-all overflow-y-auto max-h-[200px] flex-col gap-y-2 pt-2'>
                     <div className='px-2'><p className='font-semibold text-lg'>To who:</p></div>
                     <div className='px-3 grid grid-cols-2 gap-x-10 gap-y-2'>
-                        {result != null && result.map(elmt => (
-                            <div key={elmt.id} className='w-auto  rounded-xl h-[26px] gap-x-1 flex items-center justify-center  bg-[#e0f1ff]'>
+                        {result != null && result.map((elmt,key) => (
+                            <div key={key} className='w-auto  rounded-xl h-[26px] gap-x-1 flex items-center justify-center  bg-[#e0f1ff]'>
 
                                 <div> <h1 className='text-sm font-extrabold text-blue-600'>{elmt.name}</h1></div>
                                 {/* <div className='cursor-pointer' ><Icon name={"cancel"} size={10} ></Icon></div> */}
@@ -121,20 +105,20 @@ export default function Modal({ isVisible = false, onClose }) {
                 <div className='  flex-col gap-y-4 pt-2'>
                     <div className=' px-2 '><p className='font-semibold text-lg'>Recommended</p></div>
                     <div className='px-1 overflow-y-auto h-[290px]  '>
-                        {users.map(user => (
-                            <div key={user.id} className='px-6  pt-4 flex items-center justify-between'>
+                        {users.map((user, key) => (
+                            <div key={key} className='px-6  pt-4 flex items-center justify-between'>
                                 <div className='flex items-center gap-x-3'>
-                                    <Image className="rounded-full w-[56px] h-[56px]" url={user.url} ></Image>
+                                    <img className="rounded-full w-[56px] h-[56px]" src={user.profileImage}></img>
                                     <div>
-                                        <h6 className='font-semibold'>{user.fullNamse}</h6>
-                                        <p className='text-gray-500'>{user.name}</p>
+                                        <h6 className='font-semibold'>{user.username}</h6>
+                                        <p className='text-gray-500'>{user.fullname}</p>
                                     </div>
                                 </div>
 
                                 <div onClick={() => { setSUser(user) }}
                                     className={classNames({
                                         'h-[24px] w-[24px] cursor-pointer  border-[2px] border-gray-700 rounded-full': true,
-                                        'bg-facebook  border-none':tb(user.fullNamse)
+                                        'bg-facebook  border-none': tb(user.username)
 
                                     })}></div>
                             </div>

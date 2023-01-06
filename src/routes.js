@@ -12,6 +12,7 @@ import MessageLayout from "./pages/message/index";
 import DirectLayout from "./pages/message/index";
 import Inbox from "./pages/message/inbox";
 import MessageTest from "./pages/message/messagetest";
+import Logout from "./pages/logout";
 
 const routes = [
     {
@@ -22,6 +23,10 @@ const routes = [
             {
             index:true,
             element:<Home></Home>
+            },
+            {
+                path:"logout",
+                element:<Logout></Logout>
             },
             {
                 path:':username',

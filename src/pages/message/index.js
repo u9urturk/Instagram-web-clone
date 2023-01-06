@@ -39,7 +39,7 @@ export default function DirectLayout() {
         <div className=' flex relative
 
 
-          max-w-[935px] min-h-screen bg-white border rounded border-gray-300 '>
+          max-w-[935px] max-h-[590px] bg-white border rounded border-gray-300 '>
             <Helmet>
                 <title>Inbox</title>
             </Helmet>
@@ -62,7 +62,7 @@ export default function DirectLayout() {
                ) )}
 
             </div>
-            <div className='border-l flex-auto min-w-6/10 max-w-6/10  '>
+            <div className='border-l flex-auto min-w-6/10 max-w-6/10 h-[590px]'>
                 <Outlet></Outlet>
             </div>
         </div>
