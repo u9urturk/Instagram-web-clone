@@ -1,24 +1,25 @@
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast';
-import { getAllUsers } from '../firebase.js';
+import { useSelector } from 'react-redux';
+import { createMessageBox, getAllUsers, getUserInfo, getUserUid } from '../firebase.js';
 import Icon from './icon';
 
 export default function Modal({ isVisible = false, onClose, ...props }) {
-
+    const user = useSelector(state => state.auth.user)
     const [users, setUsers] = useState([])
     const [sUser, setSUser] = useState([])
-    const [result, setResutl] = useState(null)
-
+    const [usernames, setUsernames] = useState(null)
+    const [members , setMembers] = useState([])
     const vb = () => {
         localStorage.clear()
-        setResutl([])
+        setUsernames([])
         onClose()
     }
 
     function tb(xuser) {
         let ast = false;
-        result && result.forEach(element => {
+        usernames && usernames.forEach(element => {
 
             if (xuser == element.name) {
 
@@ -29,6 +30,46 @@ export default function Modal({ isVisible = false, onClose, ...props }) {
         return ast;
     }
 
+    useEffect(() => {
+        var xmembers =[
+            {
+                userId:user.uid
+            }
+        ]
+            
+        
+        
+        if(usernames){
+            usernames.map(_username=> {
+                getUserUid(_username.name).then(xs=>{
+                 xmembers.push({userId:xs.user_id})
+               })
+               setMembers(xmembers)
+            });
+            //toast.success("ok")
+            
+
+            
+        }
+    }, [usernames])
+    
+
+    const forwardMessage= ()=>{
+       
+
+       
+
+
+        if( members.length  >1){
+           // console.log(members.length)
+            toast.success("ok")
+            createMessageBox(members);
+        }else{
+            toast.error("Mesaj kutusu oluşturulamadı")
+        }
+
+        
+    }
 
     useEffect(() => {
 
@@ -55,7 +96,7 @@ export default function Modal({ isVisible = false, onClose, ...props }) {
             if (isValidate) {
                 selectUsers.push(user);
                 localStorage.setItem("users", JSON.stringify(selectUsers))
-                setResutl(selectUsers);
+                setUsernames(selectUsers);
             }
 
 
@@ -84,13 +125,13 @@ export default function Modal({ isVisible = false, onClose, ...props }) {
                 <div className="flex items-center justify-between px-5 border-b h-14 w-full border-gray-300 ">
                     <div onClick={vb} className='cursor-pointer'> <Icon name={"cancel"}></Icon></div>
                     <h6 className='text-lg font-semibold'>New Message</h6>
-                    <a href='#' className='font-semibold text-base hover:text-black transition-all'>Forward</a>
+                    <a href='#' onClick={forwardMessage} className='font-semibold text-base hover:text-black transition-all'>Forward</a>
                 </div>
                 {/*MODAL BODY*/}
                 <div className='border-b transition-all overflow-y-auto max-h-[200px] flex-col gap-y-2 pt-2'>
                     <div className='px-2'><p className='font-semibold text-lg'>To who:</p></div>
                     <div className='px-3 grid grid-cols-2 gap-x-10 gap-y-2'>
-                        {result != null && result.map((elmt,key) => (
+                        {usernames != null && usernames.map((elmt,key) => (
                             <div key={key} className='w-auto  rounded-xl h-[26px] gap-x-1 flex items-center justify-center  bg-[#e0f1ff]'>
 
                                 <div> <h1 className='text-sm font-extrabold text-blue-600'>{elmt.name}</h1></div>

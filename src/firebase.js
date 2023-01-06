@@ -65,6 +65,7 @@ export const login = async (email, password) => {
 
 export const getUserInfo = async uname=>{
   const username = await getDoc(doc(db,"usernames",uname))
+  //console.log(username.data())
   if(username.exists()){
     const user = (await getDoc(doc(db,"users",username.data().user_id))).data()
     //console.log(user)
@@ -72,6 +73,17 @@ export const getUserInfo = async uname=>{
   }else{
     toast.error('kullanıcı bulumamadı')
     throw new Error('kullanıcı bulunamadı')
+  }
+}
+
+export const getUserUid = async uname =>{
+  try {
+    const userId = await getDoc(doc(db,"usernames",uname))
+    if(userId){
+      return userId.data();
+    }
+  } catch (error) {
+    toast.error(error)
   }
 }
 
@@ -151,21 +163,31 @@ function randomId(length) {
   for ( var i = 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
-  return result;
+  return result.toString();
 }
 
-export const  createMessageBox =async (uid,members=[{mUId:""}])=>{
+
+export const  createMessageBox =async (members=[])=>{
+  console.log(members)
     try {
-      if(uid){
-        await setDoc(doc(db, "messageboxes", uid), {
-          id:null,
-          members: members,
-          formationtime:new date(),
-          messagaBoxId:randomId(11)
+      if(members){
+        await setDoc(doc(db, "messageboxes",randomId(20)), {
+          
+          members: {members},
+          messages:[
+            {
+              id:0,
+              owner:"",
+              message:""
+
+            }
+          ]
+          
 
         })
       }
     } catch (error) {
+      console.log(error.code)
       toast.error(error.code)
     }
 } 
