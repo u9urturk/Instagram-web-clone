@@ -1,4 +1,4 @@
-import { getUser } from '../../firebase.js'
+import { getMessageBoxes, getUser } from '../../firebase.js'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Outlet } from 'react-router-dom'
@@ -9,7 +9,27 @@ import Image from '../../components/image.js'
 
 export default function DirectLayout() {
     const user = useSelector(state => state.auth.user)
+    const result = getMessageBoxes();
+    //console.log(result)
 
+    const [messageBoxes,setMessageBoxes] = useState([]);
+    
+    useEffect(() => {
+        getMessageBoxes().then(el=>{
+            setMessageBoxes(el)
+           
+        })
+    }, [])
+
+    if(messageBoxes.length > 0) {
+      messageBoxes.forEach(element => {
+            console.log(element.members)
+      });
+    }
+       
+   
+   
+   
     const inboxs = [
         {
             id:1,

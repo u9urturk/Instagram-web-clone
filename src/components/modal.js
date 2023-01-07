@@ -62,6 +62,7 @@ export default function Modal({ isVisible = false, onClose, ...props }) {
 
         if( members.length  >1){
            // console.log(members.length)
+           
             toast.success("ok")
             createMessageBox(members);
         }else{

@@ -1,7 +1,7 @@
 import { data } from "autoprefixer";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signOut, updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, collection, collectionGroup, getDocs } from "firebase/firestore"
+import { getFirestore, doc, setDoc, getDoc, collection, collectionGroup, getDocs, writeBatch } from "firebase/firestore"
 import { toast } from "react-hot-toast";
 import { date } from "yup";
 import { userHendle } from "./utils";
@@ -105,7 +105,7 @@ export const getAllUsers = async ()=>{
       return users;
     }
   } catch (error) {
-    toast.error(error)
+    toast.error(error.code)
   }
 }
 
@@ -174,9 +174,10 @@ export const  createMessageBox =async (members=[])=>{
         await setDoc(doc(db, "messageboxes",randomId(20)), {
           
           members: {members},
+          formationtime:new Date().toLocaleString(),
           messages:[
             {
-              id:0,
+              time:new Date().toLocaleString(),
               owner:"",
               message:""
 
@@ -187,10 +188,45 @@ export const  createMessageBox =async (members=[])=>{
         })
       }
     } catch (error) {
-      console.log(error.code)
+      //console.log(error.code)
       toast.error(error.code)
     }
 } 
+
+export const getMessageBoxes = async () =>{
+  const docRef = await getDocs(collection(db,"messageboxes"))
+  const messageBoxes = []
+
+  docRef.forEach((elt) => {
+    let messageBox={
+    formationtime:elt.data().formationtime,
+    members:elt.data().members,
+    messages:elt.data().messages}
+
+    messageBoxes.push(messageBox)
+});
+
+try {
+  if(messageBoxes){
+    return messageBoxes
+  }
+} catch (e) {
+  toast.error(e.code)
+}
+
+}
+
+export const sendMessage = async ({messageBoxesId,owner,message})=>{
+  const batch = writeBatch(db)
+  const messageBoxRef = doc(db,"messageboxes",messageBoxesId)
+  batch.set(messageBoxRef,{messages:{
+    message:message,
+    owner:owner,
+    time:new Date().toLocaleString()
+  }});
+
+  await batch.commit();
+}
 
 
 export const logout = async () => {
