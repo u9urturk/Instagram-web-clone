@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { toast } from 'react-hot-toast'
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom'
 import Icon from '../../components/icon.js'
 import { getUserInfo } from '../../firebase.js'
@@ -18,6 +19,7 @@ export default function ProfileLayout() {
             setUser(user)
         })
         .catch(err=>{
+            toast.error(err.code)
             navigate('/',{
                 replace:true
             })
