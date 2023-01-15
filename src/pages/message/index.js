@@ -66,11 +66,7 @@ export default function DirectLayout() {
        
      
     }, [])
-
-    const currentMessageboxid = (currentitem)=>{
-        
-    }
-    
+ 
    
     //console.log(messageboxes);
     //console.log(re);
