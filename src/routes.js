@@ -8,10 +8,9 @@ import ProfileTagged from "./pages/profile/tagged";
 import Login from "./pages/auth/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Register from "./pages/auth/Register";
-import MessageLayout from "./pages/message/index";
 import DirectLayout from "./pages/message/index";
 import Inbox from "./pages/message/inbox";
-import MessageTest from "./pages/message/messagetest";
+import MessageBox from "./pages/message/messagebox";
 import Logout from "./pages/logout";
 
 const routes = [
@@ -57,8 +56,8 @@ const routes = [
 
                     },
                     {
-                        path:'test',
-                        element:<MessageTest></MessageTest>
+                        path:'t/:messageboxid',
+                        element:<MessageBox></MessageBox>
 
                     }
                 ]

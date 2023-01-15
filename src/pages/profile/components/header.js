@@ -2,7 +2,7 @@ import React from 'react'
 import Image from '../../../components/image'
 
 export default function Header({ user }) {
-    console.log(user)
+    //console.log(user)
     return user && (
         <header className='flex items-center gap-x-24 py-8 pb-10'>
             <img  className="h-[150px] w-[150px] rounded-full" src={user.profileImage}></img>     

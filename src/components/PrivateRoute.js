@@ -4,7 +4,7 @@ import { Navigate , useLocation } from 'react-router-dom';
 export default function PrivateRoute({ children }) {
 
     const user = useSelector(state=>state.auth.user)
-    const location = useLocation
+    const location = useLocation()
 
     if (!user) {
         return <Navigate to="/auth/login" replace={true} state={{

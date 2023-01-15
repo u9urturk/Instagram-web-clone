@@ -1,12 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import Icon from '../../components/icon'
 import Image from '../../components/image'
+import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../firebase'
 
 
-export default function MessageTest() {
+export default function MessageBox() {
   const user = useSelector(state => state.auth.user)
-  //console.log(user)
+  const messageboxid = useParams();
+  const result = getMessageboxByMessageSubscription(messageboxid.messageboxid)
+  const [member, setMember] = useState("");
+  
+  const fetchInformation = ()=>{
+    result.then(res=>{
+      let member = "";
+        res.members.forEach(x=>{
+          if(x.userId == user.uid){
+            return;
+          }else{
+           member = x.userId.toString()
+          }
+  
+          const getUserDetail = getUserDetailByUid(member);
+          getUserDetail.then(t=>{
+            setMember(t);
+          })
+      
+        })
+    })
+  }
+
+
+  useEffect(() => {
+    fetchInformation()  
+    console.log(member)
+  }, [messageboxid])
+  
+
+ 
 
  
   return (
@@ -15,8 +47,8 @@ export default function MessageTest() {
       <div className='w-full h-[60px]  border-b border-gray-300'>
         <div className='px-10 h-full w-full flex items-center'>
           <div className='flex items-center justify-start gap-x-3  h-full w-full'>
-            <div className='h-8 w-8 '><Image className="rounded-full" url={"pf3.jpg"}></Image></div>
-            <strong>{user.fullName}</strong>
+            <div className='h-10 w-10 '><img className="rounded-full"src={member.profileImage}></img></div>
+            <strong>{member.full_name}</strong>
           </div>
           <div className='cursor-pointer'>
             <Icon name={"info"} size={24}></Icon>
