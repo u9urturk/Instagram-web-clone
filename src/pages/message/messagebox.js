@@ -2,72 +2,45 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import Icon from '../../components/icon'
-import Image from '../../components/image'
 import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../firebase'
+import Messages from './components/messages'
 
 
 export default function MessageBox() {
   const user = useSelector(state => state.auth.user)
   const messageboxid = useParams();
-  const result = getMessageboxByMessageSubscription(messageboxid.messageboxid)
-  const [member, setMember] = useState("");
-  const [messages, setMessages] = useState();
+  const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid)
+  const [member, setMember]=useState([])
 
 
-  const fetchInformation = () => {
-    result.then(res => {
-      let member = "";
+  const fetchInformation = async () => {
+    await messagebox.then(res => {
+      let xmember = "";
       res.members.forEach(x => {
         if (x.userId == user.uid) {
           return;
         } else {
-          member = x.userId.toString()
+          xmember = x.userId.toString()
         }
 
-        const getUserDetail = getUserDetailByUid(member);
+        const getUserDetail = getUserDetailByUid(xmember);
         getUserDetail.then(t => {
           setMember(t);
+          //console.log(member);
         })
 
       })
     })
-  }
 
-  const fetchMessages = async () => {
-    let messages = []
-    await  result.then(res => {
-      res.messages.forEach(el => {
-        const owner = getUserDetailByUid(el.owner);
-        owner.then(ownerres => {
-          // console.log(ownerres.profileImage)
-          let message = {
-            profileImage: ownerres.profileImage,
-            message: el.message,
-            time: el.time
-          }
-
-          messages.push(message)
-
-        })
-      })
-    })
-    setMessages(messages);
     
   }
 
   
-
   useEffect(() => {
     fetchInformation()
-   
-   
   }, [messageboxid])
 
-  useEffect(()=>{
-    fetchMessages()
-  },[messageboxid])
-
-  console.log(member);
+  //console.log(member)
 
   return (
     <div className=''>
@@ -85,20 +58,11 @@ export default function MessageBox() {
       </div>
       {/* Body */}
       <div className='h-[440px]'>
-       {
-         messages?.map(res=>{
-          <div  className='w-full h-auto'>
-              <div className="bg-gray-500 rounded-lg">
-                   <p>{res.message}</p>   
-              </div>
-          </div>
-        })
-          
-       }
+        <Messages user={user} messagebox={messagebox} ></Messages>
       </div>
       {/* Input */}
-      <div className='w-full flex items-center h-[84px] '>
-        <div className='h-[42px] border border-gray-300 rounded-l-full rounded-r-full flex items-center mx-5 px-4 w-full'>
+      <div className='w-full flex items-center justify-center h-[84px] '>
+        <div className='h-[42px] border border-gray-300 rounded-l-full   rounded-r-full flex items-center  px-6 w-full max-w-[90%]'>
           <div className='w-[40px] cursor-pointer flex items-center justify-center'><Icon name={"ifade"} size={24}></Icon></div>
           <div className='w-[420px] '><input className='outline-none w-full' placeholder='Message...'></input></div>
           <div className='w-[40px] cursor-pointer flex items-center justify-center'><Icon name={"pictureadd"} size={24}></Icon></div>
