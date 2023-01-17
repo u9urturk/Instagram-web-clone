@@ -9,11 +9,11 @@ import Messages from './components/messages'
 export default function MessageBox() {
   const user = useSelector(state => state.auth.user)
   const messageboxid = useParams();
-  const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid)
   const [member, setMember]=useState([])
+  
 
-
-  const fetchInformation = async () => {
+  //console.log(messageboxid);
+  const fetchInformation = async (messagebox) => {
     await messagebox.then(res => {
       let xmember = "";
       res.members.forEach(x => {
@@ -34,15 +34,16 @@ export default function MessageBox() {
 
     
   }
+  useEffect(()=>{
+    fetchInformation(getMessageboxByMessageSubscription(messageboxid.messageboxid)).finally(
+    )
+  },[messageboxid])
 
-  
-  useEffect(() => {
-    fetchInformation()
-  }, [messageboxid])
+  //console.count(member)
 
   //console.log(member)
 
-  return (
+   return (
     <div className=''>
       {/* Header */}
       <div className='w-full h-[60px]  border-b border-gray-300'>
@@ -58,7 +59,7 @@ export default function MessageBox() {
       </div>
       {/* Body */}
       <div className='h-[440px]'>
-        <Messages user={user} messagebox={messagebox} ></Messages>
+        <Messages user={user} messageboxid={messageboxid} />
       </div>
       {/* Input */}
       <div className='w-full flex items-center justify-center h-[84px] '>

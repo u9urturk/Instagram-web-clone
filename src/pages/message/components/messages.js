@@ -1,14 +1,18 @@
 import userEvent from '@testing-library/user-event';
+import classNames from 'classnames';
 import React, { useEffect, useState } from 'react'
-import { getUserDetailByUid } from '../../../firebase';
+import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../../firebase';
 
 export default function Messages(props) {
 
 
     const [messages, setMessages] = useState([]);
+
+
     const getMessages = async () => {
         const dynMessages = [];
-        await props.messagebox.then(async (res) => {
+        const messagebox = getMessageboxByMessageSubscription(props.messageboxid.messageboxid)
+        await messagebox.then(async (res) => {
             let memberInfo = [];
             //console.log(memberInfo)
             await res.members.forEach(el => {
@@ -20,6 +24,7 @@ export default function Messages(props) {
                 }
 
             });
+
 
 
             await res.messages.forEach(message => {
@@ -52,36 +57,50 @@ export default function Messages(props) {
     }
 
     useEffect(() => {
-        let result = getMessages()
-        setTimeout(() => {
-            setMessages(result)
-        }, 700);
+        const start = async () => {
+            const result = getMessages()
+            setTimeout(() => {
+                result.then(res => {
+                    setMessages(res.reverse());
+                })
+            }, 500);
+        }
+
+        start();
+
+
+
     }, [props])
+
+    //console.log(messages)
 
     //console.count(messages)
 
     // console.log(messages)
 
-    if (messages.length != 0) {
-        messages.then(x=>{
-            console.log(x)
-            return (
-                <div className='h-auto w-full'>
-                    {x.forEach(message => {
-                        <div  className='h-auto max-w-[45%]'>
-                            <div className='h-auto w-auto'><p>{message.message}</p></div>
-                            <div><img></img></div>
+    return (
+        <div className='h-auto w-full'>
+            {messages.map((res, index) =>
+                <div key={index} className='h-auto w-full py-2 px-5  '>
+                    <div className={classNames({
+                        "flex gap-x-2":true,
+                        "justify-end":res.owner
+                    })}>
+                    {!res.owner&&<div className='flex items-end' ><img  className='w-8 h-8 rounded-full ' src={res.profileImage}></img></div>}
+                        <div className={classNames({
+                            'h-auto max-w-[45%] p-4  rounded-full':true,
+                            'bg-gray-300':res.owner,
+                            'border border-gray-300':!res.owner
+                        })}>
+                            <div className='h-auto w-auto'><p>{res.message}</p></div>
                         </div>
-                    })}
+                       
+                    </div>
+
                 </div>
-            )
-           })
-        
-    } else {
-        return (
-            <div><strong>LOADİNG ...</strong></div>
-        )
-    }
+            )}
+        </div>
+    )
 
 
 }
