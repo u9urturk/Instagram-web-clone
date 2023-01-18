@@ -1,78 +1,10 @@
 import userEvent from '@testing-library/user-event';
 import classNames from 'classnames';
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../../firebase';
 
-export default function Messages(props) {
-
-
-    const [messages, setMessages] = useState([]);
-
-
-    const getMessages = async () => {
-        const dynMessages = [];
-        const messagebox = getMessageboxByMessageSubscription(props.messageboxid.messageboxid)
-        await messagebox.then(async (res) => {
-            let memberInfo = [];
-            //console.log(memberInfo)
-            await res.members.forEach(el => {
-
-                if (el.userId == props.user.uid) {
-                    return
-                } else {
-                    memberInfo = getUserDetailByUid(el.userId);
-                }
-
-            });
-
-
-
-            await res.messages.forEach(message => {
-
-                if (message.owner == props.user.uid) {
-                    let owner = {
-                        owner: true,
-                        message: message.message,
-                        time: message.time
-                    }
-
-                    dynMessages.push(owner);
-                } else {
-                    memberInfo.then(res => {
-                        let member = {
-                            owner: false,
-                            profileImage: res.profileImage,
-                            message: message.message,
-                            time: message.time
-                        }
-
-                        dynMessages.push(member);
-                    })
-                }
-            })
-
-        })
-
-        return dynMessages;
-    }
-
-    useEffect(() => {
-        const start = async () => {
-            const result = getMessages()
-            setTimeout(() => {
-                result.then(res => {
-                    setMessages(res.reverse());
-                })
-            }, 500);
-        }
-
-        start();
-
-
-
-    }, [props])
-
-    //console.log(messages)
+ function Messages(messages) {
+    console.log(messages.messages);
 
     //console.count(messages)
 
@@ -80,7 +12,7 @@ export default function Messages(props) {
 
     return (
         <div className='h-auto w-full'>
-            {messages.map((res, index) =>
+            {messages &&messages.messages.map((res, index) =>
                 <div key={index} className='h-auto w-full py-2 px-5  '>
                     <div className={classNames({
                         "flex gap-x-2":true,
@@ -104,3 +36,5 @@ export default function Messages(props) {
 
 
 }
+
+export default memo(Messages)
