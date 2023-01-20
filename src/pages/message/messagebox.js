@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { act } from 'react-dom/test-utils'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import Icon from '../../components/icon'
@@ -6,48 +7,68 @@ import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../fi
 import MessageboxHeader from './components/messageboxHeader'
 import Messages from './components/messages'
 
-export default function MessageBox() {
-  console.log("app rendered")
+export default function MessageBox(context) {
+  console.count("app rendered")
 
-  const user = useSelector(state => state.auth.user)
   const messageboxid = useParams();
-  const [member, setMember] = useState([])
-  const [messages, setMessages] = useState([]);
-  const [count, setCount] = useState(0);
+  const user = useSelector(state => state.auth.user)
 
-  
-  const createMember = async () => {
-    const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid);
-    let memberImage = ""
-     await messagebox.then(x => {
-      //console.log(x.messages)
-      x.members.forEach(res => {
-        if (res.userId == user.uid) {
-          return
-        } else {
-          getUserDetailByUid(res.userId).then(res=>{
-            setMember(res);
-            memberImage=res.profileImage
-          })
-          
+  function reducer(rstate, action) {
+    switch (action.type) {
+      case 'SET_MEMBER':
+
+        return {
+          ...rstate,
+          newMember:true,
+          member: action.value
+
         }
-      });
 
-    })
+        case 'SET_MESSAGEBOX':
 
-    setTimeout(() => {
-       messagebox.then(res=>{
-       getMessages(memberImage,res.messages)
-      })
-    }, 500);
-       
+        return {
+          ...rstate,
+          messageBox: action.value
+        }
+
+      case 'SET_MESSAGES':
+
+        return {
+          ...rstate,
+          newMember:false,
+          messages: action.value
+        }
+
+      case 'NEW_MEMBER':
+
+        return {
+          ...rstate,
+          newMember: action.value
+        }
+
+      default:
+        break;
+    }
+
 
   }
 
-  const getMessages = useCallback( async (memberImage,messages) => {
+
+
+
+  const [rstate, dispatch] = useReducer(reducer, {
+    messages: [],
+    member: [],
+    messageBox:[],
+    newMember:false
+  })
+  
+  const getMessages = useCallback(async (memberImage, messages) => {
     const dynMessages = [];
     //console.log(member)
-      await messages.forEach(message => {
+    await messages.then(res=>{
+      //console.log(res.messages)
+      res.messages.forEach(message => {
 
         if (message.owner == user.uid) {
           let owner = {
@@ -55,61 +76,99 @@ export default function MessageBox() {
             message: message.message,
             time: message.time
           }
-
+  
           dynMessages.push(owner);
         } else {
-          
-            let xmember = {
-              owner: false,
-              profileImage: memberImage,
-              message: message.message,
-              time: message.time
-            }
-
-            dynMessages.push(xmember);
-          
+  
+          let xmember = {
+            owner: false,
+            profileImage: memberImage,
+            message: message.message,
+            time: message.time
+          }
+  
+          dynMessages.push(xmember);
+  
         }
       })
+    })
 
-      //console.log(dynMessages)
+    return dynMessages;
 
-      setMessages(dynMessages);
+  }, [rstate.newMember])
 
 
-      
-  },[member])
+  const createMember = useCallback( () => {
+    const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid);
+    
+    dispatch({
+      type: 'SET_MESSAGEBOX',
+      value:messagebox
+    })    
+     messagebox.then(x => {
+      //console.log(x.messages)
+      x.members.forEach(res => {
+        if (res.userId == user.uid) {
+          return
+        } else {
+          getUserDetailByUid(res.userId).then(res => {
+            dispatch({
+              type: 'SET_MEMBER',
+              value: res
+            })            
+          })
 
-  useEffect(() => {
-    // const start = async () => {
-    //   const result = getMessages();
-    //   await result.then(res => {
-    //     setMessages(res);
-    //   })
-    // }
+        }
+      });
 
-    // start();
+     
 
-    createMember()
-   
+    })
+
+
 
   }, [messageboxid])
 
- 
+
+  
+  useEffect(() => {
+    createMember()
+    
+  }, [messageboxid])
+
+
+  useEffect(()=>{
+   
+    if(rstate.newMember){
+      console.log(rstate.newMember)
+      getMessages(rstate.member.profileImage,rstate.messageBox).then(res=>{
+        dispatch({
+          type: 'SET_MESSAGES',
+          value: res
+        })
+      })
+    
+     
+    }
+    
+  },[rstate.newMember])
+
+
+
 
   //console.count(member)
-
-  //console.log(member)
+  //console.log(rstate.newMember)
 
   return (
     <div className=''>
-      
+
       {/* Header */}
       <div className='w-full h-[60px]  border-b border-gray-300'>
-        <MessageboxHeader member={member}/>
+        <MessageboxHeader member={rstate.member} /> 
       </div>
       {/* Body */}
       <div className='h-[440px]'>
-        <Messages messages={messages}  />
+         <Messages messages={rstate.messages} /> 
       </div>
       {/* Input */}
       <div className='w-full flex items-center justify-center h-[84px] '>

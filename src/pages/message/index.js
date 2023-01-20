@@ -99,7 +99,7 @@ export default function DirectLayout() {
 
             </div>
             <div className='border-l flex-auto min-w-6/10 max-w-6/10 h-[590px]'>
-                <Outlet></Outlet>
+                <Outlet ></Outlet>
             </div>
         </div>
     )

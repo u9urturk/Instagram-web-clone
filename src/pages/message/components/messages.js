@@ -6,10 +6,6 @@ import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../..
  function Messages(messages) {
     console.log(messages.messages);
 
-    //console.count(messages)
-
-    // console.log(messages)
-
     return (
         <div className='h-auto w-full'>
             {messages &&messages.messages.map((res, index) =>
