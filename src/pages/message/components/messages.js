@@ -4,7 +4,7 @@ import React, { memo, useEffect, useState } from 'react'
 import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../../firebase';
 
  function Messages(messages) {
-    console.log(messages.messages);
+    //console.log(messages.messages);
 
     return (
         <div className='h-auto w-full'>

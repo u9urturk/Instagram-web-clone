@@ -35,10 +35,12 @@ export default function Login() {
   }, [ref])
 
   if(user){
-    return <Navigate to={location.state?.return_url || '/'} replace={true}/>
+    //console.log(location.state?.return_url )
+    return <Navigate to={'/'} replace={true}/>
   }
 
   const handleSubmit = async (values,actions) => {
+    //console.log(values.username)
     await login(values.username,values.password) 
   }
 

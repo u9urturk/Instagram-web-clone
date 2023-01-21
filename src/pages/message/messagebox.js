@@ -6,9 +6,10 @@ import Icon from '../../components/icon'
 import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../firebase'
 import MessageboxHeader from './components/messageboxHeader'
 import Messages from './components/messages'
+import Sender from './components/sender'
 
-export default function MessageBox(context) {
-  console.count("app rendered")
+export default function MessageBox() {
+ // console.count("app rendered")
 
   const messageboxid = useParams();
   const user = useSelector(state => state.auth.user)
@@ -19,12 +20,12 @@ export default function MessageBox(context) {
 
         return {
           ...rstate,
-          newMember:true,
+          newMember: true,
           member: action.value
 
         }
 
-        case 'SET_MESSAGEBOX':
+      case 'SET_MESSAGEBOX':
 
         return {
           ...rstate,
@@ -35,7 +36,7 @@ export default function MessageBox(context) {
 
         return {
           ...rstate,
-          newMember:false,
+          newMember: false,
           messages: action.value
         }
 
@@ -59,14 +60,14 @@ export default function MessageBox(context) {
   const [rstate, dispatch] = useReducer(reducer, {
     messages: [],
     member: [],
-    messageBox:[],
-    newMember:false
+    messageBox: [],
+    newMember: false
   })
-  
+
   const getMessages = useCallback(async (memberImage, messages) => {
     const dynMessages = [];
     //console.log(member)
-    await messages.then(res=>{
+    await messages.then(res => {
       //console.log(res.messages)
       res.messages.forEach(message => {
 
@@ -76,19 +77,19 @@ export default function MessageBox(context) {
             message: message.message,
             time: message.time
           }
-  
+
           dynMessages.push(owner);
         } else {
-  
+
           let xmember = {
             owner: false,
             profileImage: memberImage,
             message: message.message,
             time: message.time
           }
-  
+
           dynMessages.push(xmember);
-  
+
         }
       })
     })
@@ -98,14 +99,14 @@ export default function MessageBox(context) {
   }, [rstate.newMember])
 
 
-  const createMember = useCallback( () => {
+  const createMember = useCallback(() => {
     const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid);
-    
+
     dispatch({
       type: 'SET_MESSAGEBOX',
-      value:messagebox
-    })    
-     messagebox.then(x => {
+      value: messagebox
+    })
+    messagebox.then(x => {
       //console.log(x.messages)
       x.members.forEach(res => {
         if (res.userId == user.uid) {
@@ -115,13 +116,13 @@ export default function MessageBox(context) {
             dispatch({
               type: 'SET_MEMBER',
               value: res
-            })            
+            })
           })
 
         }
       });
 
-     
+
 
     })
 
@@ -130,28 +131,28 @@ export default function MessageBox(context) {
   }, [messageboxid])
 
 
-  
+
   useEffect(() => {
     createMember()
-    
+
   }, [messageboxid])
 
 
-  useEffect(()=>{
-   
-    if(rstate.newMember){
-      console.log(rstate.newMember)
-      getMessages(rstate.member.profileImage,rstate.messageBox).then(res=>{
+  useEffect(() => {
+
+    if (rstate.newMember) {
+      //console.log(rstate.newMember)
+      getMessages(rstate.member.profileImage, rstate.messageBox).then(res => {
         dispatch({
           type: 'SET_MESSAGES',
           value: res
         })
       })
-    
-     
+
+
     }
-    
-  },[rstate.newMember])
+
+  }, [rstate.newMember])
 
 
 
@@ -161,24 +162,19 @@ export default function MessageBox(context) {
 
   return (
     <div className=''>
-
       {/* Header */}
       <div className='w-full h-[60px]  border-b border-gray-300'>
-        <MessageboxHeader member={rstate.member} /> 
+        <MessageboxHeader member={rstate.member} />
       </div>
       {/* Body */}
       <div className='h-[440px]'>
-         <Messages messages={rstate.messages} /> 
+        <Messages messages={rstate.messages} />
       </div>
       {/* Input */}
       <div className='w-full flex items-center justify-center h-[84px] '>
-        <div className='h-[42px] border border-gray-300 rounded-l-full   rounded-r-full flex items-center  px-6 w-full max-w-[90%]'>
-          <div className='w-[40px] cursor-pointer flex items-center justify-center'><Icon name={"ifade"} size={24}></Icon></div>
-          <div className='w-[420px] '><input className='outline-none w-full' placeholder='Message...'></input></div>
-          <div className='w-[40px] cursor-pointer flex items-center justify-center'><Icon name={"pictureadd"} size={24}></Icon></div>
-          <div className='w-[40px] cursor-pointer flex items-center justify-center '><Icon name={"heart"} size={24}></Icon></div>
-        </div>
+        <Sender messageBoxId={messageboxid} owner={user.uid}/>
       </div>
     </div>
   )
+
 }

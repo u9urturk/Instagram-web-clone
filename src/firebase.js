@@ -184,6 +184,20 @@ export const getAllUsers = async () => {
 //Message Operations !
 
 
+export const test = async (messageBoxesId,owner,message) => {
+  console.log(messageBoxesId,owner,message)
+  const messageBoxRef = doc(db, "messageboxes", messageBoxesId)
+  await updateDoc(messageBoxRef,{
+    messages: arrayUnion (
+     { message: message,
+      owner: owner,
+      time: new Date().toLocaleString()}
+    )
+  })
+
+}
+
+
 export const  getMessageboxByMessageSubscription =async (messagesubscription) =>{
   const docRef = doc(db, "messageboxes", messagesubscription)
   const docSnap = await getDoc(docRef);
@@ -240,12 +254,7 @@ export const createMessageBox = async (members = []) => {
         members,
         formationtime: new Date().toLocaleString(),
         messages: [
-          {
-            time: new Date().toLocaleString(),
-            owner: "",
-            message: ""
-
-          }
+         
         ]
 
 
@@ -312,18 +321,7 @@ export const getMessageBoxes = async () => {
 
 }
 
-export const sendMessage = async ({ messageBoxesId, owner, message }) => {
-  const messageBoxRef = doc(db, "messageboxes", messageBoxesId)
-  batch.set(messageBoxRef, {
-    messages: {
-      message: message,
-      owner: owner,
-      time: new Date().toLocaleString()
-    }
-  });
 
-  await batch.commit();
-}
 
 
 

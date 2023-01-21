@@ -9,53 +9,68 @@ import { useSelector } from 'react-redux'
 
 export default function DirectLayout() {
     const user = useSelector(state => state.auth.user)
-    const messageboxes=[];
-    
+    const messageboxes = [];
+
     const [re, setRe] = useState([]);
 
-    const gettest =  async ()=>{
-        const result =  getMessageSubscriptionsByUserId(user.uid)
-       
-        await result.then(res=>{
-              
-              res.messageboxesid.forEach(element => {
-                 const mbResult = getMessageboxByMessageSubscription(element)
-                 mbResult.then(mbr=>{
-                     
-                   mbr.members.forEach(member=>{
-                          if(member.userId == user.uid){
-                              return;
-                          }else {
-                              const res = getUserDetailByUid(member.userId)
-                              res.then(e=>{
-                                  let messagebox = {
-                                      
-                                          messageboxid:element,
-                                          formationTime:mbr.formationtime,
-                                          fullName:e.full_name,
-                                          profileImage:e.profileImage,
-                                          lastMessage:mbr.messages[mbr.messages.length-1]
-                                         
-                                  }
-                                  
-                                     messageboxes.push(messagebox);
-                                  
-                                  
-                              })
-                          }
-                      })
-  
-                 })
-              });   
-                
-        }) 
-     return messageboxes;
+    const gettest = async () => {
+        const result = getMessageSubscriptionsByUserId(user.uid)
+
+        await result.then(res => {
+
+            res.messageboxesid.forEach(element => {
+                const mbResult = getMessageboxByMessageSubscription(element)
+                mbResult.then(mbr => {
+
+                    mbr.members.forEach(member => {
+                        if (member.userId == user.uid) {
+                            return;
+                        } else {
+                            const res = getUserDetailByUid(member.userId)
+                            res.then(e => {
+                                //console.log(mbr.messages.length)
+                                let messagebox = {}
+                                if (mbr.messages === undefined && mbr.messages.length === 0) {
+                                    messagebox = {
+                                        messageboxid: element,
+                                        formationTime: mbr.formationtime,
+                                        fullName: e.full_name,
+                                        profileImage: e.profileImage
+
+                                        
+
+                                    }
+                                }else{
+                                    messagebox = {
+
+                                        messageboxid: element,
+                                        formationTime: mbr.formationtime,
+                                        fullName: e.full_name,
+                                        profileImage: e.profileImage,
+                                        lastMessage: mbr.messages[mbr.messages.length - 1]
+
+                                    }
+                                }
+
+
+                                messageboxes.push(messagebox);
+
+
+                            })
+                        }
+                    })
+
+                })
+            });
+
+        })
+        return messageboxes;
     }
 
 
 
-    useEffect( () => {       
-        const start = async()=>{
+    useEffect(() => {
+        const start = async () => {
             const x = await gettest();
             setTimeout(() => {
                 setRe(x);
@@ -63,11 +78,11 @@ export default function DirectLayout() {
         }
 
         start();
-       
-     
+
+
     }, [])
- 
-   
+
+
     //console.log(messageboxes);
     //console.log(re);
 
@@ -85,13 +100,12 @@ export default function DirectLayout() {
 
 
                     <NavLink key={x.messageboxid} to={`/direct/t/${x.messageboxid}`} className='px-4 pt-4 flex flex-col-2 gap-x-4 cursor-pointer hover:bg-gray-50 transition-all'>
-
                         <div  >
                             <img className="w-16 h-16 rounded-full" src={x.profileImage}></img>
                         </div>
                         <div className='pt-2' >
                             <h1 className='font-medium text-black  text-base'>{x.fullName}</h1>
-                            <p className='text-gray-400 text-sm  -mt-4  font-light'>{x.lastMessage.message}</p>
+                            {x.lastMessage && <p className='text-gray-400 text-sm  -mt-4  font-light'>{x.lastMessage.message}</p>}
                         </div>
                     </NavLink>
 
