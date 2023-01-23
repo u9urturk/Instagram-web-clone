@@ -1,12 +1,13 @@
 import { data } from "autoprefixer";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signOut, updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, collection, collectionGroup, getDocs, writeBatch, updateDoc, arrayUnion } from "firebase/firestore"
+import { getFirestore, doc, setDoc, getDoc, collection,  getDocs,  updateDoc, arrayUnion } from "firebase/firestore"
+import { getDatabase,ref, set ,  child, push, onChildAdded, onChildChanged, onChildRemoved, update, get } from "firebase/database";
 import { toast } from "react-hot-toast";
 import { userHendle } from "./utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// https://firebase.go  ogle.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -15,14 +16,15 @@ const firebaseConfig = {
   projectId: "tomris-instagram-clone",
   storageBucket: "tomris-instagram-clone.appspot.com",
   messagingSenderId: "786569525333",
-  appId: "1:786569525333:web:4418056ff9c1ec93017cdc"
+  appId: "1:786569525333:web:4418056ff9c1ec93017cdc",
+  databaseUrl:"https://tomris-instagram-clone-default-rtdb.firebaseio.com/"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
-const batch = writeBatch(db);
+const realtimeDb = getDatabase(app);
 
 
 
@@ -51,6 +53,59 @@ onAuthStateChanged(auth, async user => {
 
 
 })
+
+
+//Realtime Database Test ! 
+
+export const testCreateBox = async (members=[]) =>{
+  try {
+    if (members) {
+      //create messagebox 
+      const xrandomId = randomId(20);
+      set(ref(realtimeDb, 'messageboxes/' + xrandomId), {
+        members,
+        formationtime: new Date().toLocaleString(),
+        messages: [
+         
+        ]
+      }).then(()=>{
+        //create messagesubscriptions by user id
+
+        members.forEach(elm=>{
+          const dbRef=ref(realtimeDb)
+          get(child(dbRef,`messagesubscriptions/${elm.userId}`)).then((snapshot)=>{
+            if(snapshot.exists()){
+              const newSet ={messageboxesid:[... snapshot.val().messageboxesid , xrandomId]};
+              const updates = {};
+              updates[`messagesubscriptions/${elm.userId}`]=newSet;
+              return update(dbRef,updates);
+               
+            }else{
+              set(ref(realtimeDb, `messagesubscriptions/${elm.userId}`), {
+                messageboxesid: [xrandomId]
+              }).then(()=>{
+                //console.log("ok")
+              }).catch((e)=>{
+                console.log(e)
+              })
+            }
+          })
+        })
+
+
+
+
+      }).catch((e)=>{
+          toast.error(e);
+      })
+      
+
+    }
+  } catch (error) {
+    //console.log(error.code)
+    toast.error("Members not found ! ")
+  }
+}
 
 
 // Register and Login Operations ! 

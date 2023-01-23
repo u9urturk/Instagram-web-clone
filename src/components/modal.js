@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import { createMessageBox, getAllUsers, getUserInfo, getUserUid } from '../firebase.js';
+import { createMessageBox, getAllUsers, getUserInfo, getUserUid, testCreateBox } from '../firebase.js';
 import Icon from './icon';
 
 export default function Modal({ isVisible = false, onClose, ...props }) {
@@ -64,7 +64,7 @@ export default function Modal({ isVisible = false, onClose, ...props }) {
            // console.log(members.length)
            
             toast.success("ok")
-            createMessageBox(members);
+            testCreateBox(members);
         }else{
             toast.error("Mesaj kutusu oluşturulamadı")
         }
