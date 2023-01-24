@@ -1,90 +1,91 @@
-import { getMessageboxByMessageSubscription, getMessageSubscriptionsByUserId, getUserDetailByUid, } from '../../firebase.js'
+import { getUserDetailByUid, returntools, testGetMessageboxByMessageBoxid, testGetMessageSubscriptionsByUid, } from '../../firebase.js'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { NavLink, Outlet } from 'react-router-dom'
 import Header from './components/header'
 import { useSelector } from 'react-redux'
+import { getDatabase, ref, set, child, push, onChildAdded, onChildChanged, onChildRemoved, update, get, onValue } from "firebase/database";
 
 
 
 export default function DirectLayout() {
     const user = useSelector(state => state.auth.user)
-    const messageboxes = [];
-
+    
+    //console.log(boxRef)
     const [re, setRe] = useState([]);
+    const msRef = ref(returntools(), `messagesubscriptions/${user.uid}`)
+    onChildAdded(msRef, (snapshot) => {
+   
+        const data = snapshot.val()
+        data.forEach(elm => {
+            get(child(ref(returntools()), `messageboxes/${elm}`)).then((snapshot) => {
+                const messageboxres= snapshot.val()
+               messageboxres.members.forEach(member => {
+                    if (member.userId == user.uid) {
+                        return
+                    } else {
+                        const res = getUserDetailByUid(member.userId);
+                        //console.log(res)
+                        res.then(e => {
+                            let messageBox = {}
+                            messageBox = {
+                                messageboxid: elm,
+                                formationTime: messageboxres.formationtime,
+                                fullName: e.full_name,
+                                profileImage: e.profileImage,
+                                lastMessage: messageboxres.lastMessage
+                            }
 
-    const gettest = async () => {
-        const result = getMessageSubscriptionsByUserId(user.uid)
+                            const result = [... res]
+                            result.push(messageBox);
+                            setRe(result)
+                            
+                        })
 
-        await result.then(res => {
-
-            res.messageboxesid.forEach(element => {
-                const mbResult = getMessageboxByMessageSubscription(element)
-                mbResult.then(mbr => {
-
-                    mbr.members.forEach(member => {
-                        if (member.userId == user.uid) {
-                            return;
-                        } else {
-                            const res = getUserDetailByUid(member.userId)
-                            res.then(e => {
-                                //console.log(mbr.messages.length)
-                                let messagebox = {}
-                                if (mbr.messages === undefined && mbr.messages.length === 0) {
-                                    messagebox = {
-                                        messageboxid: element,
-                                        formationTime: mbr.formationtime,
-                                        fullName: e.full_name,
-                                        profileImage: e.profileImage
-
-                                        
-
-                                    }
-                                }else{
-                                    messagebox = {
-
-                                        messageboxid: element,
-                                        formationTime: mbr.formationtime,
-                                        fullName: e.full_name,
-                                        profileImage: e.profileImage,
-                                        lastMessage: mbr.messages[mbr.messages.length - 1]
-
-                                    }
-                                }
-
-
-                                messageboxes.push(messagebox);
-
-
-                            })
-                        }
-                    })
-
+                    
+                    }
                 })
-            });
+            })
+        });
 
-        })
-        return messageboxes;
-    }
+       
+
+    })
+    onChildChanged(msRef, (snapshot) => {
+        const data = snapshot.val()
+        data.forEach(elm => {
+            get(child(ref(returntools()), `messageboxes/${elm}`)).then((snapshot) => {
+                const messageboxres= snapshot.val()
+               messageboxres.members.forEach(member => {
+                    if (member.userId == user.uid) {
+                        return
+                    } else {
+                        const res = getUserDetailByUid(member.userId);
+                        //console.log(res)
+                        res.then(e => {
+                            let messageBox = {}
+                            messageBox = {
+                                messageboxid: elm,
+                                formationTime: messageboxres.formationtime,
+                                fullName: e.full_name,
+                                profileImage: e.profileImage,
+                                lastMessage: messageboxres.lastMessage
+                            }
+
+                            setRe(... re,messageBox)
+                            //console.log(messageBox)
+                        })
+
+                    
+                    }
+                })
+            })
+        });
+
+    })
+    
 
 
-
-    useEffect(() => {
-        const start = async () => {
-            const x = await gettest();
-            setTimeout(() => {
-                setRe(x);
-            }, 500);
-        }
-
-        start();
-
-
-    }, [])
-
-
-    //console.log(messageboxes);
-    //console.log(re);
 
     return (
         <div className=' flex relative
@@ -105,7 +106,7 @@ export default function DirectLayout() {
                         </div>
                         <div className='pt-2' >
                             <h1 className='font-medium text-black  text-base'>{x.fullName}</h1>
-                            {x.lastMessage && <p className='text-gray-400 text-sm  -mt-4  font-light'>{x.lastMessage.message}</p>}
+                            {x.lastMessage && <p className='text-gray-400 text-sm  -mt-4  font-light'>{x.lastMessage}</p>}
                         </div>
                     </NavLink>
 

@@ -2,7 +2,7 @@ import { data } from "autoprefixer";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signOut, updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, collection,  getDocs,  updateDoc, arrayUnion } from "firebase/firestore"
-import { getDatabase,ref, set ,  child, push, onChildAdded, onChildChanged, onChildRemoved, update, get } from "firebase/database";
+import { getDatabase,ref, set ,  child, push, onChildAdded, onChildChanged, onChildRemoved, update, get, onValue } from "firebase/database";
 import { toast } from "react-hot-toast";
 import { userHendle } from "./utils";
 
@@ -57,7 +57,30 @@ onAuthStateChanged(auth, async user => {
 
 //Realtime Database Test ! 
 
-export const testCreateBox = async (members=[]) =>{
+
+export const testSendMessagesByMessageboxid  =async (message,owner,messageboxid)=>{
+ 
+  const MListRef = ref(realtimeDb,`messages/${messageboxid}`);
+  const nMRef = push(MListRef);
+  set(nMRef,{
+    owner:owner,
+    message:message,
+    time:new Date().toLocaleString()
+  })
+
+}
+
+export const testGetMessagesByMessageboxid  =async ()=>{
+
+}
+
+export const returntools=()=>{
+  return realtimeDb;
+}
+
+
+
+export const testCreateBox = async (members=[],lastMessage="") =>{
   try {
     if (members) {
       //create messagebox 
@@ -65,9 +88,7 @@ export const testCreateBox = async (members=[]) =>{
       set(ref(realtimeDb, 'messageboxes/' + xrandomId), {
         members,
         formationtime: new Date().toLocaleString(),
-        messages: [
-         
-        ]
+        lastMessage:lastMessage
       }).then(()=>{
         //create messagesubscriptions by user id
 
