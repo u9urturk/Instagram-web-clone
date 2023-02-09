@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import React, { memo, useState } from 'react'
 import Icon from '../../../components/icon'
-import { test } from '../../../firebase'
+import { sendMessagesByMessageboxid, test } from '../../../firebase'
 
 function Sender(props) {
 
@@ -22,7 +22,7 @@ function Sender(props) {
   const submitHandle = e => {
     e.preventDefault()
     //console.log(messages)
-    test(props.messageBoxId.messageboxid , props.owner , messages)
+    sendMessagesByMessageboxid(messages,props.owner, props.messageBoxId.messageboxid  )
   }
 
 

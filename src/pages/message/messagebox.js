@@ -1,9 +1,10 @@
+import { onChildAdded, ref } from 'firebase/database'
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { act } from 'react-dom/test-utils'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import Icon from '../../components/icon'
-import { getMessageboxByMessageSubscription, getUserDetailByUid } from '../../firebase'
+import { getMessageboxByMessageSubscription, getUserDetailByUid, returntools } from '../../firebase'
 import MessageboxHeader from './components/messageboxHeader'
 import Messages from './components/messages'
 import Sender from './components/sender'
@@ -13,6 +14,7 @@ export default function MessageBox() {
 
   const messageboxid = useParams();
   const user = useSelector(state => state.auth.user)
+  const msRef = ref(returntools(), `/messages/${messageboxid.messageboxid}`)
 
   function reducer(rstate, action) {
     switch (action.type) {
@@ -100,6 +102,12 @@ export default function MessageBox() {
 
 
   const createMember = useCallback(() => {
+
+    onChildAdded(msRef, async (snapshot) => {
+      const data = snapshot.val()
+      console.log(data)
+    })
+
     const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid);
 
     dispatch({
@@ -153,7 +161,6 @@ export default function MessageBox() {
     }
 
   }, [rstate.newMember])
-
 
 
 

@@ -58,7 +58,7 @@ onAuthStateChanged(auth, async user => {
 //Realtime Database Test ! 
 
 
-export const testSendMessagesByMessageboxid  =async (message,owner,messageboxid)=>{
+export const sendMessagesByMessageboxid  =async (message,owner,messageboxid)=>{
  
   const MListRef = ref(realtimeDb,`messages/${messageboxid}`);
   const nMRef = push(MListRef);
@@ -70,9 +70,7 @@ export const testSendMessagesByMessageboxid  =async (message,owner,messageboxid)
 
 }
 
-export const testGetMessagesByMessageboxid  =async ()=>{
 
-}
 
 export const returntools=()=>{
   return realtimeDb;
