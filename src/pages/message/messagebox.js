@@ -1,4 +1,4 @@
-import { onChildAdded, ref } from 'firebase/database'
+import { onChildAdded, onChildChanged, ref } from 'firebase/database'
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { act } from 'react-dom/test-utils'
 import { useSelector } from 'react-redux'
@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import Icon from '../../components/icon'
 import { getMessageboxByMessageSubscription, getUserDetailByUid, returntools } from '../../firebase'
 import MessageboxHeader from './components/messageboxHeader'
+import messages from './components/messages'
 import Messages from './components/messages'
 import Sender from './components/sender'
 
@@ -18,36 +19,14 @@ export default function MessageBox() {
 
   function reducer(rstate, action) {
     switch (action.type) {
-      case 'SET_MEMBER':
-
-        return {
-          ...rstate,
-          newMember: true,
-          member: action.value
-
-        }
-
-      case 'SET_MESSAGEBOX':
-
-        return {
-          ...rstate,
-          messageBox: action.value
-        }
-
+  
       case 'SET_MESSAGES':
 
         return {
           ...rstate,
-          newMember: false,
           messages: action.value
         }
 
-      case 'NEW_MEMBER':
-
-        return {
-          ...rstate,
-          newMember: action.value
-        }
 
       default:
         break;
@@ -60,18 +39,12 @@ export default function MessageBox() {
 
 
   const [rstate, dispatch] = useReducer(reducer, {
-    messages: [],
-    member: [],
-    messageBox: [],
-    newMember: false
-  })
+    messages: []
+   })
 
-  const getMessages = useCallback(async (memberImage, messages) => {
+  const getMessages = useCallback(async (messages) => {
     const dynMessages = [];
-    //console.log(member)
-    await messages.then(res => {
-      //console.log(res.messages)
-      res.messages.forEach(message => {
+      messages.forEach(message => {
 
         if (message.owner == user.uid) {
           let owner = {
@@ -85,7 +58,6 @@ export default function MessageBox() {
 
           let xmember = {
             owner: false,
-            profileImage: memberImage,
             message: message.message,
             time: message.time
           }
@@ -94,75 +66,60 @@ export default function MessageBox() {
 
         }
       })
-    })
-
+    
+      //console.log(dynMessages)
     return dynMessages;
+    
 
-  }, [rstate.newMember])
+  })
 
 
-  const createMember = useCallback(() => {
+  useEffect(() => {
+   
+    
+    const run = ()=>{
+      const messages = []
+      const unsub1= onChildAdded(msRef, async (snapshot) => {
 
-    onChildAdded(msRef, async (snapshot) => {
-      const data = snapshot.val()
-      console.log(data)
-    })
-
-    const messagebox = getMessageboxByMessageSubscription(messageboxid.messageboxid);
-
-    dispatch({
-      type: 'SET_MESSAGEBOX',
-      value: messagebox
-    })
-    messagebox.then(x => {
-      //console.log(x.messages)
-      x.members.forEach(res => {
-        if (res.userId == user.uid) {
-          return
-        } else {
-          getUserDetailByUid(res.userId).then(res => {
-            dispatch({
-              type: 'SET_MEMBER',
-              value: res
-            })
+        messages.push(snapshot.val())
+        await getMessages(messages).then(res=>{
+          dispatch({
+            type:'SET_MESSAGES',
+            value:res
           })
+        })
 
-        }
+       
+      });
+      const unsub2= onChildChanged(msRef, async (snapshot) => {
+        messages.push(snapshot.val());
+        await getMessages(messages).then(res=>{
+          dispatch({
+            type:'SET_MESSAGES',
+            value:res
+          })
+        })
+        //console.log(snapshot.val());
+
       });
 
+      
 
+      return()=>{
+        unsub1();
+        unsub2();
+      }
 
-    })
-
-
-
-  }, [messageboxid])
-
-
-
-  useEffect(() => {
-    createMember()
-
-  }, [messageboxid])
-
-
-  useEffect(() => {
-
-    if (rstate.newMember) {
-      //console.log(rstate.newMember)
-      getMessages(rstate.member.profileImage, rstate.messageBox).then(res => {
-        dispatch({
-          type: 'SET_MESSAGES',
-          value: res
-        })
-      })
-
+    
 
     }
 
-  }, [rstate.newMember])
+    messageboxid.messageboxid && run();
+    
 
+  }, [messageboxid])
 
+console.log(rstate.messages)
 
   //console.count(member)
   //console.log(rstate.newMember)
